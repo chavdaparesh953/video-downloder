@@ -12,9 +12,10 @@ body {
   background: var(--background);
   font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* Custom subtle shimmer for skeleton loading */
+/* Shimmer animation for skeleton loaders */
 @keyframes shimmer {
   0% {
     background-position: -200% 0;
@@ -27,10 +28,19 @@ body {
 .animate-shimmer {
   background: linear-gradient(
     90deg,
-    rgba(241, 245, 249, 1) 0%,
-    rgba(226, 232, 240, 0.8) 50%,
-    rgba(241, 245, 249, 1) 100%
+    rgba(241, 245, 249, 0.9) 0%,
+    rgba(226, 232, 240, 0.95) 50%,
+    rgba(241, 245, 249, 0.9) 100%
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite linear;
+}
+
+/* Subtle glow utilities */
+.glow-primary {
+  box-shadow: 0 0 25px -5px rgba(37, 99, 235, 0.25);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35);
 }
