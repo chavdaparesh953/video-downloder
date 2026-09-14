@@ -22,11 +22,8 @@ async function getYtInstance() {
 export const dynamic = "force-dynamic";
 
 /**
- * Direct High-Speed Video Stream API Route
- * GET /api/stream?url=...&title=...&type=video
- *
- * Streams the real media file directly to the user as an MP4 attachment.
- * Zero API keys, zero third-party redirects, processed entirely within Next.js backend.
+ * Direct In-App Multi-Quality Video & Audio Stream Route
+ * GET /api/stream?url=...&title=...&quality=(1080p|720p|480p|360p|audio)
  */
 export async function GET(request) {
   try {
@@ -48,31 +45,49 @@ export async function GET(request) {
     );
 
     if (!ytMatch || !ytMatch[1]) {
-      // If not YouTube, stream fallback sample or redirect
       return NextResponse.redirect("https://www.w3schools.com/html/mov_bbb.mp4");
     }
 
     const videoId = ytMatch[1];
     const yt = await getYtInstance();
 
-    // Stream the real video directly from YouTube
+    const isAudio = quality.includes("audio");
     let stream;
+
     try {
-      stream = await yt.download(videoId, {
-        type: "video+audio",
-        quality: quality === "720p" ? "720p" : "best",
-        format: "mp4",
-      });
+      if (isAudio) {
+        // Stream audio track
+        stream = await yt.download(videoId, {
+          type: "audio",
+          quality: "best",
+        });
+      } else {
+        // Stream selected video resolution (1080p, 720p, 480p, 360p, or best available)
+        stream = await yt.download(videoId, {
+          type: "video+audio",
+          quality: quality === "best" ? "best" : quality,
+          format: "mp4",
+        });
+      }
     } catch (streamErr) {
       console.warn("Retrying with fallback stream options:", streamErr?.message);
-      // Fallback: try best available video+audio
+      // Resilient fallback: download best available stream for this video
       stream = await yt.download(videoId, {
-        type: "video+audio",
+        type: isAudio ? "audio" : "video+audio",
       });
     }
 
-    // Format safe clean filename for attachment download
-    const safeFilename = `${videoTitle.replace(/[^a-zA-Z0-9_\-\s]/g, "").trim().replace(/\s+/g, "_")}.mp4`;
+    // Determine extension and mime type
+    const ext = isAudio ? "mp3" : "mp4";
+    const contentType = isAudio ? "audio/mpeg" : "video/mp4";
+    const qualityTag = isAudio ? "Audio" : quality;
+
+    // Clean safe filename
+    const cleanBaseTitle = videoTitle
+      .replace(/[^a-zA-Z0-9_\-\s]/g, "")
+      .trim()
+      .replace(/\s+/g, "_");
+    const safeFilename = `${cleanBaseTitle}_${qualityTag}.${ext}`;
 
     // Convert to web readable stream for Next.js response
     const webStream = new ReadableStream({
@@ -91,7 +106,7 @@ export async function GET(request) {
     return new Response(webStream, {
       status: 200,
       headers: {
-        "Content-Type": "video/mp4",
+        "Content-Type": contentType,
         "Content-Disposition": `attachment; filename="${safeFilename}"`,
         "Cache-Control": "no-cache",
       },
