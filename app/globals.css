@@ -17,6 +17,18 @@ body {
   overflow-x: hidden;
 }
 
+/* Universal scrollbar suppressor for clean mobile UI */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+}
+
 /* Shimmer animation for skeleton loaders */
 @keyframes shimmer {
   0% {

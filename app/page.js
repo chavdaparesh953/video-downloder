@@ -285,9 +285,9 @@ export default function HomePage() {
         {/* Hero & Search Section */}
         <section className="relative px-3.5 pt-8 pb-5 sm:px-6 sm:pt-10 lg:pt-14">
           <div className="mx-auto max-w-4xl text-center">
-            {/* Top Interactive Platform Tabs - Mobile Horizontal Scrollable */}
-            <div className="mb-6 sm:mb-8 flex justify-center overflow-x-auto py-1 no-scrollbar">
-              <div className="inline-flex items-center gap-1 sm:gap-1.5 rounded-2xl bg-white p-1 sm:p-1.5 shadow-sm border border-slate-200 shrink-0">
+            {/* Top Interactive Platform Tabs - Clean Responsive Grid on Mobile, Flex on Desktop */}
+            <div className="mb-6 sm:mb-8 flex justify-center px-1">
+              <div className="grid grid-cols-3 sm:flex sm:flex-row items-center gap-1 sm:gap-1.5 rounded-2xl bg-white p-1.5 shadow-xs border border-slate-200/90 w-full sm:w-auto max-w-xl">
                 {PLATFORMS.map((tab) => {
                   const isActive = activeTab === tab.id;
                   const IconComp = tab.icon;
@@ -300,7 +300,7 @@ export default function HomePage() {
                         setActiveTab(tab.id);
                         setError("");
                       }}
-                      className={`relative flex items-center gap-1.5 sm:gap-2 rounded-xl px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-bold transition-all shrink-0 ${
+                      className={`relative flex items-center justify-center gap-1 sm:gap-1.5 rounded-xl px-2 py-2 sm:px-3.5 sm:py-2 text-xs font-bold transition-all ${
                         isActive
                           ? "bg-gradient-to-r from-[#0056b3] to-[#0284c7] text-white shadow-md shadow-blue-600/25"
                           : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
@@ -310,7 +310,7 @@ export default function HomePage() {
                       {IconComp && (
                         <IconComp className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-[#00d2ff]" />
                       )}
-                      <span>{tab.label}</span>
+                      <span className="truncate">{tab.label}</span>
                       {isActive && tab.badge && (
                         <span className="hidden md:inline-block rounded bg-white/20 px-1.5 py-0.5 text-[9px] font-bold uppercase">
                           {tab.badge}
