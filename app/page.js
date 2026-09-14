@@ -1,12 +1,11 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element */
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import {
   Download,
   Loader2,
   AlertCircle,
-  CheckCircle2,
   Sparkles,
   Clipboard,
   X,
@@ -16,12 +15,10 @@ import {
   ShieldCheck,
   Zap,
   Layers,
-  ExternalLink,
-  ChevronDown,
   Check,
-  Info,
   RefreshCw,
 } from "lucide-react";
+import VidFetchLogo from "../components/VidFetchLogo";
 import {
   YouTubeIcon,
   InstagramIcon,
@@ -39,7 +36,7 @@ const PLATFORMS = [
     icon: Sparkles,
     heroTitle: "Universal Video Downloader",
     heroSubtitle:
-      "Paste any video link from YouTube, Instagram, Facebook, TikTok, or Twitter/X. Instant high-speed MP4 extraction.",
+      "Paste any video URL from YouTube, Instagram, Facebook, TikTok, or Twitter/X. Instant high-speed extraction.",
     placeholder: "Paste any video link (YouTube, Instagram, Facebook, TikTok, Twitter/X)...",
     sampleUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     badge: "Auto Detect",
@@ -51,7 +48,7 @@ const PLATFORMS = [
     customIcon: YouTubeIcon,
     heroTitle: "YouTube Video & Shorts Downloader",
     heroSubtitle:
-      "Download YouTube videos, Shorts, and audio tracks in 1080p Full HD or 320kbps MP3 format with zero speed throttling.",
+      "Download YouTube videos, Shorts, and audio tracks in 1080p Full HD or 320kbps MP3 format with VidFetch.",
     placeholder: "Paste YouTube link (e.g. https://www.youtube.com/watch?v=...)",
     sampleUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     badge: "1080p / 4K",
@@ -63,7 +60,7 @@ const PLATFORMS = [
     customIcon: InstagramIcon,
     heroTitle: "Instagram Reels & Video Downloader",
     heroSubtitle:
-      "Save Instagram Reels, video posts, and IGTV clips in original high-definition MP4 directly to your gallery.",
+      "Save Instagram Reels, video posts, and IGTV clips in original high-definition MP4 directly to your device.",
     placeholder: "Paste Instagram link (e.g. https://www.instagram.com/reel/...)",
     sampleUrl: "https://www.instagram.com/reel/C8_example_reel/",
     badge: "HD Reels",
@@ -87,7 +84,7 @@ const PLATFORMS = [
     customIcon: TikTokIcon,
     heroTitle: "TikTok Video Downloader",
     heroSubtitle:
-      "Download TikTok videos without watermark in HD quality. Clean sound, pure video, instant download.",
+      "Download TikTok videos without watermark in pristine HD quality. Clean audio, pure video, instant download.",
     placeholder: "Paste TikTok link (e.g. https://www.tiktok.com/@user/video/...)",
     sampleUrl: "https://www.tiktok.com/@user/video/7123456789",
     badge: "No Watermark",
@@ -114,7 +111,6 @@ export default function HomePage() {
   const [videoData, setVideoData] = useState(null);
   const [activeFormatType, setActiveFormatType] = useState("video"); // 'video' or 'audio'
   const [copiedLink, setCopiedLink] = useState(false);
-  const [, startTransition] = useTransition();
 
   const currentPlatform =
     PLATFORMS.find((p) => p.id === activeTab) || PLATFORMS[0];
@@ -135,10 +131,9 @@ export default function HomePage() {
     setUrl(val);
     if (error) setError("");
 
-    // If user is on 'all' tab, automatically switch visual tab or detect
     const detected = detectPlatformFromUrl(val);
     if (detected && activeTab === "all") {
-      // Keep on current or auto-highlight
+      // Intentionally keep seamless auto-detection
     }
   };
 
@@ -228,40 +223,22 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#F9FAFB] text-slate-900 font-sans">
-      {/* Top Professional Navigation Bar */}
+    <div className="flex min-h-screen flex-col bg-[#F8FAFC] text-slate-900">
+      {/* Top Header Navigation */}
       <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur-md shadow-xs">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
-          {/* Brand Logo */}
-          <div
-            onClick={handleReset}
-            className="flex items-center gap-2.5 cursor-pointer select-none group"
-          >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-              <Download className="h-5 w-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-lg font-black tracking-tight text-slate-900">
-                  Save<span className="text-blue-600">Media</span>
-                </span>
-                <span className="rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-blue-700">
-                  Pro
-                </span>
-              </div>
-              <p className="text-[11px] font-medium text-slate-400">
-                Universal Video Downloader
-              </p>
-            </div>
+          {/* VidFetch Logo & Favicon */}
+          <div onClick={handleReset}>
+            <VidFetchLogo />
           </div>
 
-          {/* Quick Nav Links */}
-          <div className="hidden md:flex items-center gap-1 bg-slate-100/80 p-1 rounded-xl text-xs font-semibold text-slate-600">
+          {/* Quick Platform Switcher Navigation */}
+          <div className="hidden md:flex items-center gap-1 bg-slate-100/90 p-1.5 rounded-2xl text-xs font-semibold text-slate-600">
             <button
               onClick={() => setActiveTab("youtube")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition ${
                 activeTab === "youtube"
-                  ? "bg-white text-slate-900 shadow-xs"
+                  ? "bg-white text-slate-900 shadow-xs font-bold"
                   : "hover:text-slate-900"
               }`}
             >
@@ -270,9 +247,9 @@ export default function HomePage() {
             </button>
             <button
               onClick={() => setActiveTab("instagram")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition ${
                 activeTab === "instagram"
-                  ? "bg-white text-slate-900 shadow-xs"
+                  ? "bg-white text-slate-900 shadow-xs font-bold"
                   : "hover:text-slate-900"
               }`}
             >
@@ -281,9 +258,9 @@ export default function HomePage() {
             </button>
             <button
               onClick={() => setActiveTab("facebook")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition ${
                 activeTab === "facebook"
-                  ? "bg-white text-slate-900 shadow-xs"
+                  ? "bg-white text-slate-900 shadow-xs font-bold"
                   : "hover:text-slate-900"
               }`}
             >
@@ -292,9 +269,9 @@ export default function HomePage() {
             </button>
             <button
               onClick={() => setActiveTab("tiktok")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition ${
                 activeTab === "tiktok"
-                  ? "bg-white text-slate-900 shadow-xs"
+                  ? "bg-white text-slate-900 shadow-xs font-bold"
                   : "hover:text-slate-900"
               }`}
             >
@@ -303,24 +280,24 @@ export default function HomePage() {
             </button>
           </div>
 
-          {/* Status Badge */}
+          {/* Speed / Status Badge */}
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              Fast & 100% Free
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-cyan-50 px-3 py-1 text-xs font-bold text-[#0056b3] border border-cyan-200/70">
+              <span className="h-2 w-2 rounded-full bg-[#00d2ff] animate-pulse" />
+              100% Free & Fast
             </span>
           </div>
         </div>
       </header>
 
-      {/* Main Container */}
+      {/* Main Area */}
       <main className="flex-1 pb-16">
-        {/* Hero & Search Container */}
+        {/* Hero & Search Section */}
         <section className="relative px-4 pt-10 pb-6 sm:px-6 lg:pt-14">
           <div className="mx-auto max-w-4xl text-center">
-            {/* Top platform tabs bar */}
+            {/* Top Interactive Platform Tabs */}
             <div className="mb-8 flex justify-center">
-              <div className="inline-flex flex-wrap items-center justify-center gap-1 rounded-2xl bg-white p-1.5 shadow-sm border border-slate-200">
+              <div className="inline-flex flex-wrap items-center justify-center gap-1.5 rounded-2xl bg-white p-1.5 shadow-sm border border-slate-200">
                 {PLATFORMS.map((tab) => {
                   const isActive = activeTab === tab.id;
                   const IconComp = tab.icon;
@@ -335,15 +312,15 @@ export default function HomePage() {
                       }}
                       className={`relative flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-bold transition-all sm:text-sm ${
                         isActive
-                          ? "bg-slate-900 text-white shadow-md shadow-slate-900/20"
+                          ? "bg-gradient-to-r from-[#0056b3] to-[#0284c7] text-white shadow-md shadow-blue-600/25"
                           : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                       }`}
                     >
                       {CustomIcon && <CustomIcon className="h-4 w-4 shrink-0" />}
-                      {IconComp && <IconComp className="h-4 w-4 shrink-0 text-amber-400" />}
+                      {IconComp && <IconComp className="h-4 w-4 shrink-0 text-[#00d2ff]" />}
                       <span>{tab.label}</span>
                       {isActive && tab.badge && (
-                        <span className="hidden sm:inline-block rounded bg-white/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase">
+                        <span className="hidden sm:inline-block rounded bg-white/20 px-1.5 py-0.5 text-[10px] font-bold uppercase">
                           {tab.badge}
                         </span>
                       )}
@@ -354,27 +331,33 @@ export default function HomePage() {
             </div>
 
             {/* Dynamic Hero Headings */}
-            <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-5xl lg:text-5xl">
-              {currentPlatform.heroTitle}
-            </h1>
-            <p className="mx-auto mt-3.5 max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
-              {currentPlatform.heroSubtitle}
-            </p>
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-[#0056b3] border border-blue-200/60 mb-2">
+                <Sparkles className="h-3.5 w-3.5 text-[#00d2ff]" />
+                VidFetch Engine • Instant MP4 & MP3
+              </div>
+              <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-5xl">
+                {currentPlatform.heroTitle}
+              </h1>
+              <p className="mx-auto max-w-2xl text-sm leading-relaxed text-slate-600 sm:text-base">
+                {currentPlatform.heroSubtitle}
+              </p>
+            </div>
 
-            {/* Main Input Box */}
+            {/* VidFetch Input Bar */}
             <div className="mx-auto mt-8 max-w-3xl">
-              <div className="rounded-3xl border border-slate-200/90 bg-white p-2.5 shadow-xl shadow-slate-200/60 transition-all focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10">
+              <div className="rounded-3xl border border-slate-200/90 bg-white p-2.5 shadow-xl shadow-slate-200/60 transition-all focus-within:border-[#0056b3] focus-within:ring-4 focus-within:ring-blue-500/10">
                 <form
                   onSubmit={handleDownload}
                   className="flex flex-col gap-2.5 sm:flex-row sm:items-center"
                 >
                   <div className="relative flex flex-1 items-center">
-                    {/* Dynamic Platform Icon inside Input */}
+                    {/* Platform Icon inside input */}
                     <div className="pointer-events-none absolute left-3.5 flex items-center justify-center">
                       {currentPlatform.customIcon ? (
                         <currentPlatform.customIcon className="h-5 w-5" />
                       ) : (
-                        <Sparkles className="h-5 w-5 text-blue-600" />
+                        <Sparkles className="h-5 w-5 text-[#0056b3]" />
                       )}
                     </div>
 
@@ -388,7 +371,7 @@ export default function HomePage() {
                       required
                     />
 
-                    {/* Actions inside input: Paste / Clear */}
+                    {/* Actions inside input: Clear & Paste */}
                     <div className="absolute right-2.5 flex items-center gap-1.5">
                       {url ? (
                         <button
@@ -403,7 +386,7 @@ export default function HomePage() {
                         <button
                           type="button"
                           onClick={handlePasteClipboard}
-                          className="flex items-center gap-1 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition"
+                          className="flex items-center gap-1 rounded-lg bg-slate-100 px-2.5 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-200 hover:text-slate-900 transition"
                           title="Paste from clipboard"
                         >
                           <Clipboard className="h-3.5 w-3.5" />
@@ -413,37 +396,37 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* High Impact Download Button */}
+                  {/* VidFetch High-Energy Fetch Button */}
                   <button
                     type="submit"
                     disabled={loading}
                     id="download-submit-btn"
-                    className="flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-600/30 transition-all hover:bg-blue-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-75 sm:w-auto"
+                    className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#0056b3] via-[#0284c7] to-[#0056b3] px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-600/30 transition-all hover:opacity-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-75 sm:w-auto"
                   >
                     {loading ? (
                       <>
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>Extracting...</span>
+                        <Loader2 className="h-4 w-4 animate-spin text-[#00d2ff]" />
+                        <span>Fetching...</span>
                       </>
                     ) : (
                       <>
                         <Download className="h-4 w-4" />
-                        <span>Download</span>
+                        <span>Fetch Video</span>
                       </>
                     )}
                   </button>
                 </form>
               </div>
 
-              {/* Instant Test Sample Links */}
+              {/* Sample Links for Quick Demo */}
               <div className="mt-3.5 flex flex-wrap items-center justify-center gap-2 text-xs text-slate-500">
-                <span className="font-medium text-slate-400">Quick Test:</span>
+                <span className="font-semibold text-slate-400">Quick Test:</span>
                 <button
                   type="button"
                   onClick={() =>
                     handleSampleClick("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
                   }
-                  className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 font-semibold text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition"
+                  className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 font-semibold text-slate-700 hover:border-blue-400 hover:text-[#0056b3] hover:bg-slate-50 transition"
                 >
                   YouTube 4K
                 </button>
@@ -452,7 +435,7 @@ export default function HomePage() {
                   onClick={() =>
                     handleSampleClick("https://www.instagram.com/reel/C8_example_reel/")
                   }
-                  className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 font-semibold text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition"
+                  className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 font-semibold text-slate-700 hover:border-pink-400 hover:text-pink-600 hover:bg-slate-50 transition"
                 >
                   Instagram Reel
                 </button>
@@ -461,18 +444,18 @@ export default function HomePage() {
                   onClick={() =>
                     handleSampleClick("https://www.facebook.com/watch/?v=102030405060")
                   }
-                  className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 font-semibold text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition"
+                  className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 font-semibold text-slate-700 hover:border-blue-500 hover:text-blue-600 hover:bg-slate-50 transition"
                 >
                   Facebook Watch
                 </button>
               </div>
 
-              {/* Error Message Box */}
+              {/* Error Box */}
               {error && (
                 <div className="mt-4 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50/90 p-4 text-left text-sm text-red-800 shadow-sm animate-in fade-in">
                   <AlertCircle className="h-5 w-5 shrink-0 text-red-600 mt-0.5" />
                   <div className="flex-1">
-                    <p className="font-bold">Unable to download video</p>
+                    <p className="font-bold">Unable to fetch video</p>
                     <p className="mt-0.5 text-xs text-red-700">{error}</p>
                   </div>
                   <button
@@ -504,9 +487,9 @@ export default function HomePage() {
                   <div className="h-6 w-full rounded-lg animate-shimmer" />
                   <div className="h-4 w-3/4 rounded-lg animate-shimmer" />
 
-                  <div className="mt-2 flex items-center gap-2 text-xs font-semibold text-blue-600">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Resolving direct CDN video streams...</span>
+                  <div className="mt-2 flex items-center gap-2 text-xs font-bold text-[#0056b3]">
+                    <Loader2 className="h-4 w-4 animate-spin text-[#00d2ff]" />
+                    <span>VidFetch resolving high-speed media streams...</span>
                   </div>
 
                   <div className="h-12 w-full rounded-xl animate-shimmer mt-2" />
@@ -516,41 +499,41 @@ export default function HomePage() {
           </section>
         )}
 
-        {/* Genuine Production Result Card */}
+        {/* Result Card */}
         {!loading && videoData && (
           <section className="px-4 py-4 sm:px-6">
             <div
               id="result-card"
               className="mx-auto max-w-3xl overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-slate-200/70"
             >
-              {/* Card Header Status */}
+              {/* Status Header */}
               <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/70 px-6 py-3 text-xs">
-                <div className="flex items-center gap-2 font-semibold text-slate-700">
+                <div className="flex items-center gap-2 font-bold text-slate-700">
                   <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Stream Extracted Successfully
+                  Stream Ready for Download
                 </div>
                 <button
                   onClick={handleReset}
-                  className="flex items-center gap-1 font-semibold text-slate-500 hover:text-slate-900 transition"
+                  className="flex items-center gap-1 font-bold text-slate-500 hover:text-slate-900 transition"
                 >
                   <RefreshCw className="h-3 w-3" />
-                  <span>Download Another</span>
+                  <span>Fetch Another Video</span>
                 </button>
               </div>
 
               <div className="p-6 sm:p-7">
                 {/* Media Preview + Info */}
                 <div className="flex flex-col gap-6 md:flex-row">
-                  {/* Thumbnail Container */}
+                  {/* Thumbnail */}
                   <div className="relative aspect-video w-full shrink-0 overflow-hidden rounded-2xl bg-slate-950 md:w-72 group shadow-sm">
                     <img
                       src={videoData.thumbnail}
                       alt={videoData.title}
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105 opacity-90"
                     />
-                    {/* Subtle Play Overlay */}
+                    {/* Play Overlay */}
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/90 text-slate-900 shadow-lg backdrop-blur-xs transition group-hover:scale-110">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/95 text-slate-900 shadow-lg backdrop-blur-xs transition group-hover:scale-110">
                         <Play className="h-5 w-5 ml-0.5 fill-current" />
                       </div>
                     </div>
@@ -559,12 +542,12 @@ export default function HomePage() {
                       {videoData.platform}
                     </span>
                     {/* Duration Badge */}
-                    <span className="absolute bottom-2.5 right-2.5 rounded-lg bg-black/85 px-2 py-0.5 text-[11px] font-mono font-medium text-white backdrop-blur-xs">
+                    <span className="absolute bottom-2.5 right-2.5 rounded-lg bg-black/85 px-2 py-0.5 text-[11px] font-mono font-bold text-white backdrop-blur-xs">
                       {videoData.duration}
                     </span>
                   </div>
 
-                  {/* Right Info Section */}
+                  {/* Info Section */}
                   <div className="flex flex-1 flex-col justify-between">
                     <div>
                       {/* Creator Info */}
@@ -575,7 +558,7 @@ export default function HomePage() {
                             alt={videoData.author.name}
                             className="h-6 w-6 rounded-full object-cover border border-slate-200"
                           />
-                          <span className="text-xs font-bold text-slate-700">
+                          <span className="text-xs font-bold text-slate-800">
                             {videoData.author.name}
                           </span>
                           <span className="text-[11px] text-slate-400">
@@ -585,7 +568,7 @@ export default function HomePage() {
                       )}
 
                       {/* Video Title */}
-                      <h2 className="text-base font-extrabold text-slate-900 sm:text-lg leading-snug line-clamp-2">
+                      <h2 className="text-base font-black text-slate-900 sm:text-lg leading-snug line-clamp-2">
                         {videoData.title}
                       </h2>
                     </div>
@@ -598,7 +581,7 @@ export default function HomePage() {
                         rel="noopener noreferrer"
                         download="video.mp4"
                         id="download-mp4-btn"
-                        className="group flex items-center justify-center gap-2.5 rounded-2xl bg-emerald-600 px-6 py-4 text-sm font-extrabold text-white shadow-xl shadow-emerald-600/30 transition-all hover:bg-emerald-700 active:scale-[0.98]"
+                        className="group flex items-center justify-center gap-2.5 rounded-2xl bg-emerald-600 px-6 py-4 text-sm font-black text-white shadow-xl shadow-emerald-600/30 transition-all hover:bg-emerald-700 active:scale-[0.98]"
                       >
                         <Download className="h-5 w-5 transition-transform group-hover:translate-y-0.5" />
                         <span>Download MP4 (Best 1080p Quality)</span>
@@ -607,7 +590,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                {/* Quality Formats Tabs (Video vs Audio) */}
+                {/* Formats Switcher (MP4 vs MP3) */}
                 <div className="mt-8 border-t border-slate-100 pt-6">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
@@ -637,7 +620,7 @@ export default function HomePage() {
 
                     <button
                       onClick={() => handleCopyDirectLink(videoData.downloadUrl)}
-                      className="text-xs font-semibold text-slate-500 hover:text-blue-600 transition flex items-center gap-1"
+                      className="text-xs font-bold text-slate-500 hover:text-[#0056b3] transition flex items-center gap-1"
                     >
                       {copiedLink ? (
                         <>
@@ -653,7 +636,7 @@ export default function HomePage() {
                     </button>
                   </div>
 
-                  {/* Format Rows */}
+                  {/* Formats List */}
                   <div className="space-y-2">
                     {activeFormatType === "video"
                       ? videoData.videoFormats?.map((fmt, idx) => (
@@ -662,7 +645,7 @@ export default function HomePage() {
                             className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50/60 px-4 py-3 hover:bg-slate-50 transition"
                           >
                             <div className="flex items-center gap-3">
-                              <span className="rounded-md bg-blue-100 px-2 py-0.5 text-[11px] font-bold text-blue-700">
+                              <span className="rounded-md bg-blue-100 px-2 py-0.5 text-[11px] font-bold text-[#0056b3]">
                                 {fmt.format}
                               </span>
                               <div>
@@ -671,12 +654,12 @@ export default function HomePage() {
                                     {fmt.quality}
                                   </p>
                                   {fmt.badge && (
-                                    <span className="rounded bg-emerald-100 px-1.5 py-0.2 text-[10px] font-semibold text-emerald-700">
+                                    <span className="rounded bg-emerald-100 px-1.5 py-0.2 text-[10px] font-bold text-emerald-700">
                                       {fmt.badge}
                                     </span>
                                   )}
                                 </div>
-                                <p className="text-[11px] text-slate-400">
+                                <p className="text-[11px] text-slate-400 font-medium">
                                   {fmt.resolution} • {fmt.size}
                                 </p>
                               </div>
@@ -708,12 +691,12 @@ export default function HomePage() {
                                     {fmt.quality}
                                   </p>
                                   {fmt.badge && (
-                                    <span className="rounded bg-purple-100 px-1.5 py-0.2 text-[10px] font-semibold text-purple-700">
+                                    <span className="rounded bg-purple-100 px-1.5 py-0.2 text-[10px] font-bold text-purple-700">
                                       {fmt.badge}
                                     </span>
                                   )}
                                 </div>
-                                <p className="text-[11px] text-slate-400">
+                                <p className="text-[11px] text-slate-400 font-medium">
                                   {fmt.resolution} • {fmt.size}
                                 </p>
                               </div>
@@ -742,24 +725,24 @@ export default function HomePage() {
           <AdBanner />
         </div>
 
-        {/* How It Works & Guide */}
+        {/* How It Works with VidFetch */}
         <section className="mt-8 border-t border-slate-200/80 bg-white px-4 py-16 sm:px-6">
           <div className="mx-auto max-w-5xl">
             <div className="text-center mb-12">
-              <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-700">
-                Simple & Efficient
+              <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-[#0056b3]">
+                Fast & Secure
               </span>
-              <h2 className="mt-3 text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">
-                How to Download Online Videos
+              <h2 className="mt-3 text-2xl font-black tracking-tight text-slate-900 sm:text-3xl">
+                How to Download with VidFetch
               </h2>
               <p className="mt-2 text-sm text-slate-500">
-                Follow these 3 straightforward steps to download any video in HD
+                Save any video across popular platforms in 3 simple steps
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="relative rounded-3xl border border-slate-100 bg-slate-50/60 p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-600 text-white font-black text-lg mb-5 shadow-md shadow-blue-500/25">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#0056b3] to-[#0284c7] text-white font-black text-lg mb-5 shadow-md shadow-blue-500/25">
                   01
                 </div>
                 <h3 className="text-base font-bold text-slate-900">Copy Video Link</h3>
@@ -769,12 +752,12 @@ export default function HomePage() {
               </div>
 
               <div className="relative rounded-3xl border border-slate-100 bg-slate-50/60 p-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 text-white font-black text-lg mb-5 shadow-md shadow-indigo-500/25">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#0284c7] to-[#00d2ff] text-white font-black text-lg mb-5 shadow-md shadow-cyan-500/25">
                   02
                 </div>
-                <h3 className="text-base font-bold text-slate-900">Paste & Analyze</h3>
+                <h3 className="text-base font-bold text-slate-900">Paste in VidFetch</h3>
                 <p className="mt-2 text-xs leading-relaxed text-slate-600">
-                  Paste the URL into the input field above. Our engine instantly detects the platform and video quality options.
+                  Paste the URL into VidFetch. Our engine instantly analyzes stream qualities and bitrates.
                 </p>
               </div>
 
@@ -789,14 +772,14 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Value Props */}
+            {/* VidFetch Highlights */}
             <div className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-6">
               <div className="flex items-start gap-3.5 p-5 rounded-2xl border border-slate-200/70 bg-white">
-                <Zap className="h-6 w-6 text-amber-500 shrink-0" />
+                <Zap className="h-6 w-6 text-[#00d2ff] shrink-0" />
                 <div>
-                  <h4 className="text-sm font-bold text-slate-900">Maximum Speed CDN</h4>
+                  <h4 className="text-sm font-bold text-slate-900">Blazing Fast Speed</h4>
                   <p className="mt-1 text-xs text-slate-500 leading-relaxed">
-                    Direct stream links provide unthrottled download speeds with full bandwidth.
+                    Direct CDN stream extraction gives you full bandwidth without artificial throttling.
                   </p>
                 </div>
               </div>
@@ -804,19 +787,19 @@ export default function HomePage() {
               <div className="flex items-start gap-3.5 p-5 rounded-2xl border border-slate-200/70 bg-white">
                 <ShieldCheck className="h-6 w-6 text-emerald-500 shrink-0" />
                 <div>
-                  <h4 className="text-sm font-bold text-slate-900">Zero Watermarks</h4>
+                  <h4 className="text-sm font-bold text-slate-900">No Watermarks</h4>
                   <p className="mt-1 text-xs text-slate-500 leading-relaxed">
-                    Preserves pristine original video files without intrusive overlay branding.
+                    Save clean, high-resolution original MP4 video files without intrusive overlay branding.
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3.5 p-5 rounded-2xl border border-slate-200/70 bg-white">
-                <Layers className="h-6 w-6 text-blue-500 shrink-0" />
+                <Layers className="h-6 w-6 text-[#0056b3] shrink-0" />
                 <div>
-                  <h4 className="text-sm font-bold text-slate-900">Multi-Format Extraction</h4>
+                  <h4 className="text-sm font-bold text-slate-900">Multi-Quality Options</h4>
                   <p className="mt-1 text-xs text-slate-500 leading-relaxed">
-                    Extract in 1080p, 720p, 480p MP4 or convert audio directly to high-bitrate MP3.
+                    Extract 1080p Full HD, 720p HD, 480p, or convert audio directly to 320kbps MP3.
                   </p>
                 </div>
               </div>
@@ -829,8 +812,8 @@ export default function HomePage() {
       <footer className="border-t border-slate-200 bg-white py-8 px-4 sm:px-6">
         <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-800">SaveMedia</span>
-            <span>• Universal Online Video Downloader</span>
+            <span className="font-bold text-slate-800">VidFetch</span>
+            <span>• Fast & Free Online Video Downloader</span>
           </div>
           <p className="text-slate-400 text-center sm:text-right">
             Disclaimer: For personal offline educational backup only. Please respect copyright laws and content creators.

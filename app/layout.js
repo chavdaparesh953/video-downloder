@@ -1,29 +1,24 @@
-import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
-
 export const metadata = {
-  title: "Universal Video Downloader - Fast & Free MP4 Video Saver",
+  title: "VidFetch - Universal Video Downloader (Fast & Free HD MP4)",
   description:
-    "Free, fast, and modern online video downloader. Download high-definition MP4 videos and MP3 audio from YouTube, Instagram, Facebook, and more.",
+    "VidFetch is the modern, high-speed universal video downloader. Download crystal-clear 1080p Full HD MP4 and 320kbps MP3 from YouTube, Instagram Reels, Facebook, TikTok, and Twitter/X.",
   keywords: [
-    "video downloader",
-    "youtube downloader",
+    "VidFetch",
+    "VidFetch video downloader",
+    "youtube video downloader",
     "instagram reels downloader",
     "facebook video downloader",
-    "mp4 download",
+    "tiktok no watermark downloader",
+    "free mp4 downloader",
   ],
-  authors: [{ name: "Universal Video Downloader" }],
+  authors: [{ name: "VidFetch" }],
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export const viewport = {
@@ -35,9 +30,10 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} font-sans bg-slate-50 text-slate-900 min-h-screen antialiased flex flex-col selection:bg-blue-600 selection:text-white`}
-      >
+      <head>
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+      </head>
+      <body className="font-sans bg-[#F9FAFB] text-slate-900 min-h-screen antialiased flex flex-col selection:bg-[#0056b3] selection:text-white">
         {children}
       </body>
     </html>

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -10,7 +12,7 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  font-family: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -36,11 +38,11 @@ body {
   animation: shimmer 1.5s infinite linear;
 }
 
-/* Subtle glow utilities */
-.glow-primary {
-  box-shadow: 0 0 25px -5px rgba(37, 99, 235, 0.25);
+/* Brand Glow Utilities for VidFetch */
+.glow-vidfetch {
+  box-shadow: 0 10px 30px -5px rgba(0, 86, 179, 0.25), 0 0 20px -5px rgba(0, 210, 255, 0.3);
 }
 
 .glow-emerald {
-  box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.35);
 }

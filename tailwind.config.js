@@ -7,9 +7,19 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Poppins", "system-ui", "sans-serif"],
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        electric: {
+          blue: "#0056b3",
+          light: "#0284c7",
+        },
+        neon: {
+          mint: "#00d2ff",
+        },
       },
     },
   },
