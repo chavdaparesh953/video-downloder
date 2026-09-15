@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { extractNativeMedia } from "@/lib/nativeExtractor";
 
 /**
  * Universal Video Downloader API Route Handler
@@ -54,13 +55,15 @@ export async function POST(request) {
 
     /*
     |--------------------------------------------------------------------------
-    | Live Dynamic Metadata Extractor (Zero API Keys Needed)
+    | Live Dynamic Metadata Extractor (100% Self-Hosted & Independent)
     |--------------------------------------------------------------------------
     */
     let realTitle = "";
     let realAuthorName = `@${platform.toLowerCase()}_creator`;
     let realThumbnail = "";
     let videoId = "";
+    let directMediaDownloadUrl = null;
+    let videoDuration = "HD Stream";
 
     // 4A. If YouTube URL: Extract video ID and fetch real video title & thumbnail
     if (platform === "YouTube") {
@@ -90,14 +93,23 @@ export async function POST(request) {
       }
     }
 
-    // 4B. If Instagram URL
-    if (platform === "Instagram") {
-      const igMatch = cleanUrl.match(/(?:reel|p|tv)\/([a-zA-Z0-9_-]+)/i);
-      const postId = igMatch ? igMatch[1] : "viral_reel";
-      realTitle = `Instagram Reel (${postId}) • Original Audio`;
-      realAuthorName = "@instagram_creator";
-      realThumbnail =
-        "https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=800&q=80";
+    // 4B. If Instagram, TikTok, Facebook, or Twitter: Extract via native self-hosted engine
+    if (platform === "Instagram" || platform === "TikTok" || platform === "Facebook" || platform === "Twitter / X") {
+      const nativeResult = await extractNativeMedia(cleanUrl);
+
+      if (nativeResult && nativeResult.success) {
+        realTitle = nativeResult.title;
+        realAuthorName = nativeResult.author?.name || realAuthorName;
+        realThumbnail = nativeResult.thumbnail || realThumbnail;
+        directMediaDownloadUrl = nativeResult.directUrl;
+        videoDuration = nativeResult.duration || videoDuration;
+      } else if (platform === "Instagram") {
+        const igMatch = cleanUrl.match(/(?:reel|p|tv|reels)\/([a-zA-Z0-9_-]+)/i);
+        const postId = igMatch ? igMatch[1] : "media";
+        realTitle = `Instagram Reel (${postId}) • Original Audio`;
+        realThumbnail =
+          "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=800&q=80";
+      }
     }
 
     // 4C. If TikTok URL
@@ -126,13 +138,15 @@ export async function POST(request) {
     }
 
     // Direct multi-quality streaming endpoints
-    const baseStream = `/api/stream?url=${encodeURIComponent(cleanUrl)}&title=${encodeURIComponent(realTitle)}`;
+    const baseStream = directMediaDownloadUrl
+      ? `/api/stream?directUrl=${encodeURIComponent(directMediaDownloadUrl)}&title=${encodeURIComponent(realTitle)}`
+      : `/api/stream?url=${encodeURIComponent(cleanUrl)}&title=${encodeURIComponent(realTitle)}`;
 
     const extractedData = {
       title: realTitle,
       thumbnail: realThumbnail,
       downloadUrl: `${baseStream}&quality=best`,
-      duration: "HD Stream",
+      duration: videoDuration || "HD Stream",
       platform: platform,
       sourceUrl: cleanUrl,
       videoId: videoId,

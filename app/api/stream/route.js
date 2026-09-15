@@ -29,8 +29,50 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const videoUrl = searchParams.get("url");
-    const videoTitle = searchParams.get("title") || "video";
+    const directUrl = searchParams.get("directUrl");
+    const videoTitle = searchParams.get("title") || "VidFetch_Media";
     const quality = searchParams.get("quality") || "best";
+
+    // 1. Direct CDN streaming for Instagram, Facebook, and universal direct media (Meta CDN / Cloudflare)
+    if (directUrl) {
+      try {
+        const fetchRes = await fetch(directUrl, {
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+          },
+        });
+
+        if (!fetchRes.ok) {
+          return NextResponse.redirect(directUrl);
+        }
+
+        const isAudio = quality.includes("audio");
+        const ext = isAudio ? "mp3" : "mp4";
+        const contentType =
+          fetchRes.headers.get("content-type") ||
+          (isAudio ? "audio/mpeg" : "video/mp4");
+
+        const cleanBaseTitle =
+          videoTitle
+            .replace(/[^a-zA-Z0-9_\-\s]/g, "")
+            .trim()
+            .replace(/\s+/g, "_") || "VidFetch_Video";
+        const safeFilename = `${cleanBaseTitle}.${ext}`;
+
+        return new Response(fetchRes.body, {
+          status: 200,
+          headers: {
+            "Content-Type": contentType,
+            "Content-Disposition": `attachment; filename="${safeFilename}"`,
+            "Cache-Control": "public, max-age=3600",
+          },
+        });
+      } catch (err) {
+        console.warn("Direct stream proxy fallback to redirect:", err?.message);
+        return NextResponse.redirect(directUrl);
+      }
+    }
 
     if (!videoUrl) {
       return NextResponse.json(
